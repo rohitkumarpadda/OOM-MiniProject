@@ -38,6 +38,10 @@ public class EditorPane extends RSyntaxTextArea {
         scheme.getStyle(Token.COMMENT_EOL).foreground = new Color(128, 128, 128); // Comments
         scheme.getStyle(Token.COMMENT_MULTILINE).foreground = new Color(128, 128, 128); // Multiline comments
         scheme.getStyle(Token.OPERATOR).foreground = new Color(212, 212, 212); // Operators
+        scheme.getStyle(Token.DATA_TYPE).foreground = new Color(86, 156, 214); // Data types
+        scheme.getStyle(Token.FUNCTION).foreground = new Color(78, 201, 176); // Functions
+        scheme.getStyle(Token.VARIABLE).foreground = new Color(156, 220, 254); // Variables
+        scheme.getStyle(Token.PREPROCESSOR).foreground = new Color(155, 155, 155); // Preprocessor directives
 
     }
 

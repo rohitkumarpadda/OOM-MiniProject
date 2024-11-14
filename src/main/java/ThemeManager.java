@@ -25,6 +25,7 @@ public class ThemeManager {
             UIManager.put("Button.foreground", Color.WHITE);
 
             // Menu customization
+            UIManager.put("MenuBar.foreground", Color.BLACK);
             UIManager.put("MenuBar.background", new Color(35, 35, 35));
             UIManager.put("Menu.foreground", Color.WHITE);
             UIManager.put("MenuItem.foreground", Color.WHITE);

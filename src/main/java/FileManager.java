@@ -1,6 +1,7 @@
 import java.io.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 
 public class FileManager {
     private JFileChooser fileChooser;
@@ -9,9 +10,36 @@ public class FileManager {
     public FileManager() {
         fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Java Files", "java"));
+
+        // Style the file chooser
+        styleFileChooser();
     }
 
-    // Open a Java file
+    private void styleFileChooser() {
+        // Set modern font
+        Font defaultFont = new Font("Segoe UI", Font.PLAIN, 13);
+        updateFileChooserFont(fileChooser, defaultFont);
+
+        // Customize file chooser colors
+        UIManager.put("FileChooser.background", new Color(43, 43, 43));
+        UIManager.put("FileChooser.foreground", new Color(220, 220, 220));
+        UIManager.put("FileChooser.viewPlacesButtonIcon", null);
+
+        // Style the buttons
+        UIManager.put("FileChooser.cancelButtonText", "Cancel");
+        UIManager.put("FileChooser.okButtonText", "OK");
+    }
+
+    private void updateFileChooserFont(Container container, Font font) {
+        for (Component c : container.getComponents()) {
+            c.setFont(font);
+            if (c instanceof Container) {
+                updateFileChooserFont((Container) c, font);
+            }
+        }
+    }
+
+    // Rest of the FileManager methods remain the same
     public String openFile(JFrame parent) {
         int result = fileChooser.showOpenDialog(parent);
         if (result == JFileChooser.APPROVE_OPTION) {
@@ -21,7 +49,6 @@ public class FileManager {
         return null;
     }
 
-    // Save the current file
     public void saveFile(JFrame parent, String content) {
         if (currentFile != null) {
             writeFile(currentFile, content);
@@ -30,16 +57,17 @@ public class FileManager {
         }
     }
 
-    // Save as a new file
     public void saveAsFile(JFrame parent, String content) {
         int result = fileChooser.showSaveDialog(parent);
         if (result == JFileChooser.APPROVE_OPTION) {
             currentFile = fileChooser.getSelectedFile();
+            if (!currentFile.getName().toLowerCase().endsWith(".java")) {
+                currentFile = new File(currentFile.getAbsolutePath() + ".java");
+            }
             writeFile(currentFile, content);
         }
     }
 
-    // Read file content
     private String readFile(File file) {
         StringBuilder content = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -53,7 +81,6 @@ public class FileManager {
         return content.toString();
     }
 
-    // Write content to file
     private void writeFile(File file, String content) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
             bw.write(content);

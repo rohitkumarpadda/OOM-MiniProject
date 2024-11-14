@@ -8,6 +8,8 @@ public class JavaEditor extends JFrame {
     private ExecutionManager executionManager;
 
     public JavaEditor() {
+        ThemeManager.initializeTheme();
+
         fileManager = new FileManager();
         editorPane = new EditorPane();
         outputArea = new JTextArea(10, 50);
@@ -17,15 +19,30 @@ public class JavaEditor extends JFrame {
 
         setLayout(new BorderLayout());
 
-        add(new JScrollPane(editorPane), BorderLayout.CENTER);
-        add(new JScrollPane(outputArea), BorderLayout.SOUTH);
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        mainPanel.add(editorPane.getScrollPane(), BorderLayout.CENTER);
+        mainPanel.add(new JScrollPane(outputArea), BorderLayout.SOUTH);
+
+        add(mainPanel);
 
         createMenuBar();
 
         setTitle("Visual Java Editor");
-        setSize(800, 600);
+        setSize(1024, 768);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); // Center on screen
+
+        // Set minimum size
+        setMinimumSize(new Dimension(800, 600));
+
         setVisible(true);
+
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new JavaEditor());
     }
 
     public EditorPane getEditorPane() {
@@ -96,9 +113,5 @@ public class JavaEditor extends JFrame {
         if (result == JOptionPane.YES_OPTION) {
             fileManager.saveAsFile(this, editorPane.getText());
         }
-    }
-
-    public static void main(String[] args) {
-        new JavaEditor();
     }
 }

@@ -6,7 +6,8 @@ public class FindReplaceDialog extends JDialog {
 
     private JTextField findField;
     private JTextField replaceField;
-    private JButton findButton, replaceButton, replaceAllButton;
+    private JButton findButton, replaceButton, replaceAllButton, findNextButton, findPreviousButton;
+    private JCheckBox matchCaseCheckBox;
     private EditorPane editorPane;
     private int lastIndex = 0;
 
@@ -51,21 +52,30 @@ public class FindReplaceDialog extends JDialog {
         gbc.gridwidth = 2;
         mainPanel.add(replaceField, gbc);
 
+        // Match case checkbox
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 3;
+        gbc.weightx = 0.0;
+        mainPanel.add(matchCaseCheckBox, gbc);
+
         // Buttons panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
         buttonPanel.setBackground(new Color(43, 43, 43));
         buttonPanel.add(findButton);
+        buttonPanel.add(findNextButton);
+        buttonPanel.add(findPreviousButton);
         buttonPanel.add(replaceButton);
         buttonPanel.add(replaceAllButton);
 
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 3;
         gbc.insets = new Insets(12, 4, 4, 4);
         mainPanel.add(buttonPanel, gbc);
 
         setContentPane(mainPanel);
-        setSize(400, 200);
+        setSize(500, 250);
         setLocationRelativeTo(editorPane);
         setResizable(false);
     }
@@ -77,11 +87,18 @@ public class FindReplaceDialog extends JDialog {
 
         // Create and style buttons
         findButton = createStyledButton("Find");
+        findNextButton = createStyledButton("Find Next");
+        findPreviousButton = createStyledButton("Find Previous");
         replaceButton = createStyledButton("Replace");
         replaceAllButton = createStyledButton("Replace All");
 
+        // Create and style checkbox
+        matchCaseCheckBox = createStyledCheckBox("Match Case");
+
         // Add button actions
         findButton.addActionListener(e -> findText());
+        findNextButton.addActionListener(e -> findNextText());
+        findPreviousButton.addActionListener(e -> findPreviousText());
         replaceButton.addActionListener(e -> replaceText());
         replaceAllButton.addActionListener(e -> replaceAllText());
     }
@@ -122,6 +139,14 @@ public class FindReplaceDialog extends JDialog {
         return button;
     }
 
+    private JCheckBox createStyledCheckBox(String text) {
+        JCheckBox checkBox = new JCheckBox(text);
+        checkBox.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        checkBox.setBackground(new Color(43, 43, 43));
+        checkBox.setForeground(new Color(220, 220, 220));
+        return checkBox;
+    }
+
     private JLabel createStyledLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -132,6 +157,10 @@ public class FindReplaceDialog extends JDialog {
     private void findText() {
         String textToFind = findField.getText();
         String content = editorPane.getText();
+        if (!matchCaseCheckBox.isSelected()) {
+            textToFind = textToFind.toLowerCase();
+            content = content.toLowerCase();
+        }
 
         lastIndex = content.indexOf(textToFind, lastIndex);
         if (lastIndex >= 0) {
@@ -140,6 +169,28 @@ public class FindReplaceDialog extends JDialog {
             lastIndex += textToFind.length();
         } else {
             lastIndex = 0;
+            showStyledMessage("Text not found");
+        }
+    }
+
+    private void findNextText() {
+        findText();
+    }
+
+    private void findPreviousText() {
+        String textToFind = findField.getText();
+        String content = editorPane.getText();
+        if (!matchCaseCheckBox.isSelected()) {
+            textToFind = textToFind.toLowerCase();
+            content = content.toLowerCase();
+        }
+
+        lastIndex = content.lastIndexOf(textToFind, lastIndex - textToFind.length() - 1);
+        if (lastIndex >= 0) {
+            editorPane.setSelectionStart(lastIndex);
+            editorPane.setSelectionEnd(lastIndex + textToFind.length());
+        } else {
+            lastIndex = content.length();
             showStyledMessage("Text not found");
         }
     }
@@ -156,6 +207,10 @@ public class FindReplaceDialog extends JDialog {
         String textToFind = findField.getText();
         String replacement = replaceField.getText();
         String content = editorPane.getText();
+        if (!matchCaseCheckBox.isSelected()) {
+            textToFind = textToFind.toLowerCase();
+            content = content.toLowerCase();
+        }
         content = content.replace(textToFind, replacement);
         editorPane.setText(content);
     }
